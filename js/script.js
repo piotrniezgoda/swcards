@@ -20,22 +20,26 @@ const swCards = (function() {
   }
 
   const showFirstCard = function() {
-    fetch('https://swapi.co/api/people/1/')
+    showNewCard(1);
+
+    printCharactersList().then( function() {
+      return addBoxEvent();
+    })
+  }
+
+  const showNewCard = function(id) {
+    fetch('https://swapi.co/api/people/' + id + '/')
     .then( function(response){
       return response.json()
     })
     .then(function(json){
       outputSrc.charName.textContent = json.name
-      outputSrc.charPhoto.style.backgroundImage = 'url("img/char1.jpg")'
+      outputSrc.charPhoto.style.backgroundImage = `url("img/char${id}.jpg`
       outputSrc.charYear.textContent = json.birth_year
       outputSrc.charGender.textContent = json.gender
       outputSrc.charHair.textContent = json.hair_color
       outputSrc.charHeight.textContent = json.height
       outputSrc.charMass.textContent = json.mass
-
-      printCharactersList().then( () => {
-        return addBoxEvent();
-      })
     })
   }
 
@@ -58,19 +62,24 @@ const swCards = (function() {
         }) //then end
       } // for loop end
 
+
       setTimeout( () => {
         resolve()
-      },2000)
+      },2400)
     }) //promise end
   }
 
   const addBoxEvent = function() {
       const characterBoxes = document.querySelectorAll('.character-thumb');
-      for(const box of characterBoxes) {
-        box.addEventListener('click', function() {
-          alert('coming soon');
-        })
+      for(let box of characterBoxes) {
+        box.addEventListener('click', changeCurrentCard);
+        box.classList.add('click--active');
       }
+  }
+
+  const changeCurrentCard = function() {
+    const characterID = this.getAttribute('data-id');
+    showNewCard(characterID);
   }
 
   return {
